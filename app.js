@@ -4,12 +4,58 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
+const util = require("util");
 
-const OUTPUT_DIR = path.resolve(__dirname, "output");
-const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+main();
+
+async function main() {
+    try {
+        const data = await getUserInput();
+        const htmlString = render(data);
+        await makeOutputFile(htmlString);
+        console.log("Successfully created the HTML");
+    } catch (error) {
+        console.log(error);
+    };
+};
+
+async function getUserInput() {
+    return inquirer.prompt([
+        {
+            name: "name",
+            type: "input",
+            message: "What is your manager's name?"
+        },
+        {
+            name: "id",
+            type: "input",
+            message: "What is your manager's id?"
+        },
+        {
+            name: "email",
+            type: "input",
+            message: "What is your manager's email?"
+        },
+        {
+            name: "officeNumber",
+            type: "input",
+            message: "What is your manager's office number?"
+        },
+    ]);
+};
+
+
+async function makeOutputFile(htmlString) {
+    const OUTPUT_DIR = path.resolve(__dirname, "output");
+    const outputPath = path.join(OUTPUT_DIR, "team.html");
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        await mkdir(OUTPUT_DIR);
+    };
+    await writeFile(outputPath, htmlString);
+};
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
