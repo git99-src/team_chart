@@ -79,24 +79,30 @@ main();
 
 function main() {
     console.log("Please build your team")
+    // prompt user for inpput
     const askManager = inquirer.prompt(managerQuestions).then((answers) => {
+        // build new manageer object
         const newManager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber)
+        // add to array that will be used to render html
         employeeArray.push(newManager)
-        console.log("done")
         const htmlString = render(employeeArray);
+        // create folder and html file
         const outputFilePath = writeToFile("team.html", htmlString);
         console.log("`Created the HTML file");
     })
 
 };
 
-
+// create folder output and team.html file
 function writeToFile(fileName, htmlString) {
+    // get path for root output file
     let outputPath = path.join(process.cwd(), "./output");
+    // if folder does not exist - make it
     if (!fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath);
     }
     outputPath = path.join(outputPath, fileName);
+    // create the html file 
     fs.writeFileSync(outputPath, htmlString);
     return outputPath;
 }
